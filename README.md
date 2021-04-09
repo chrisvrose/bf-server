@@ -2,7 +2,7 @@
 
 A simple language server for Brainfuck based on the example.
 
-
+![BF](https://chrisvrose.github.io/static/projects/screenshots/bf-server.png)
 ## Functionality
 
 - [X] Syntax
