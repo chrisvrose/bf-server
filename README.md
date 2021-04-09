@@ -5,11 +5,11 @@ A simple language server for Brainfuck based on the example.
 
 ## Functionality
 
-This Language Server works for plain text file. It has the following language features:
-- Completions for identifiers
-- Diagnostics regenerated on each file change or configuration change
+- [X] Syntax
+- [X] Bracket matching
+- [X] Autocomplete suggestions
 
-
+<!-- 
 ## Structure
 
 ```
@@ -33,4 +33,4 @@ This Language Server works for plain text file. It has the following language fe
 - Select `Launch Client` from the drop down.
 - Run the launch config.
 - If you want to debug the server as well use the launch configuration `Attach to Server`
-
+ -->

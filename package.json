@@ -22,6 +22,10 @@
 	"activationEvents": [
 		"onLanguage:bf"
 	],
+	"repository": {
+		"type": "git",
+		"url":"https://github.com/chrisvrose/bf-server"
+	},
 	"main": "./client/out/extension",
 	"contributes": {
 		"languages": [
