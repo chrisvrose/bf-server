@@ -151,10 +151,10 @@ const validateBrackets = (text: string) => {
 	let count = 0, lp: number[] = [],issues:number[]=[];
 	const textsplit = text.split(``);
 	textsplit.forEach((x, i) => {
-		if (x == '(' || x == ')') {
+		if (x == '[' || x == ']') {
 			
-			if (x == '(') lp.push(i);
-			if (x == ')') {if(lp.length==0) issues.push(i);lp.pop();}
+			if (x == '[') lp.push(i);
+			if (x == ']') {if(lp.length==0) issues.push(i);lp.pop();}
 
 			
 		}
@@ -181,7 +181,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 				end: textDocument.positionAt(e+1),
 			},
 			severity:DiagnosticSeverity.Error,
-			code:'( and )',
+			code:'[ and ]',
 		})));
 	
 	// diagnostics.push({
@@ -206,11 +206,6 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	// Send the computed diagnostics to VSCode.
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 }
-
-connection.onDidChangeWatchedFiles(_change => {
-	// Monitored files have change in VSCode
-	connection.console.log('We received an file change event');
-});
 
 // This handler provides the initial list of the completion items.
 connection.onCompletion(
@@ -254,22 +249,6 @@ connection.onCompletion(
 	}
 );
 
-//TODOF Implement further
-// This handler resolves additional information for the item selected in
-// the completion list.
-// connection.onCompletionResolve(
-// 	(item: CompletionItem): CompletionItem => {
-// 		if (item.data === 1) {
-// 			item.detail = 'Addition';
-// 			item.documentation = 'Add 1 to the cell';
-
-// 		} else if (item.data === 2) {
-// 			item.detail = 'Subtraction';
-// 			item.documentation = 'Subtract 1 from the cell';
-// 		}
-// 		return item;
-// 	}
-// );
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events

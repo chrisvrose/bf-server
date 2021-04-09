@@ -51,8 +51,8 @@
 			"name":"keyword.operator.output"
 		},
 		"paren-expression": {
-			"begin": "\\(",
-			"end": "\\)",
+			"begin": "\\[",
+			"end": "\\]",
 			"beginCaptures": {
 				"0": {
 					"name": "punctuation.paren.open"

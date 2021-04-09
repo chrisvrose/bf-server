@@ -8,6 +8,7 @@ A simple language server for Brainfuck based on the example.
 - [X] Syntax
 - [X] Bracket matching
 - [X] Autocomplete suggestions
+- [ ] Extension icon
 
 <!-- 
 ## Structure

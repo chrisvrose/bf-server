@@ -8,7 +8,9 @@
 	"version": "0.0.1",
 	"categories": [],
 	"keywords": [
-		"multi-root ready"
+		"multi-root ready",
+		"brainfuck",
+		"branflakes"
 	],
 	"prettier":{
 		"tabWidth": 4,
