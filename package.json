@@ -1,0 +1,91 @@
+{
+	"name": "bfc-server",
+	"displayName": "BF Language",
+	"description": "Brainfuck",
+	"author": "Rose",
+	"license": "MIT",
+	"publisher": "Rose",
+	"version": "0.0.1",
+	"categories": [],
+	"keywords": [
+		"multi-root ready"
+	],
+	"prettier":{
+		"tabWidth": 4,
+		"semi": true,
+		"arrowParens": "avoid",
+		"singleQuote": true
+	},
+	"engines": {
+		"vscode": "^1.43.0"
+	},
+	"activationEvents": [
+		"onLanguage:bf"
+	],
+	"main": "./client/out/extension",
+	"contributes": {
+		"languages": [
+			{
+				"id": "bf",
+				"aliases": [
+					"Branflakes",
+					"Brainfuck",
+					"BF",
+					"Brainfsck"
+				],
+				"extensions": [
+					".bf",
+					".bfsck",
+					".brainfuck"
+				],
+				"configuration": "./bf-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "bf",
+				"scopeName": "source.bf",
+				"path": "./syntaxes/bf.tmLanguage.json"
+			}
+		],
+		"commands": [],
+		"configuration": {
+			"type": "object",
+			"title": "Configurable properties",
+			"properties": {
+				"languageServerExample.maxNumberOfProblems": {
+					"scope": "resource",
+					"type": "number",
+					"default": 5,
+					"description": "Controls the maximum number of problems produced by the server."
+				},
+				"languageServerExample.trace.server": {
+					"scope": "window",
+					"type": "string",
+					"enum": [
+						"off",
+						"messages",
+						"verbose"
+					],
+					"default": "off",
+					"description": "Traces the communication between VS Code and the language server."
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -b",
+		"watch": "tsc -b -w",
+		"postinstall": "cd client && npm install && cd ../server && npm install && cd .."
+	},
+	"private": true,
+	"devDependencies": {
+		"@types/mocha": "^5.2.7",
+		"@types/node": "^12.12.39",
+		"@typescript-eslint/parser": "^2.33.0",
+		"eslint": "^6.4.0",
+		"mocha": "^6.2.2",
+		"typescript": "^3.9.2"
+	}
+}
