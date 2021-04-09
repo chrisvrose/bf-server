@@ -1,6 +1,6 @@
-# Brainfuck extension
+# BF extension
 
-A simple language server for Brainfuck based on the example.
+A simple language server for the ~~Brainfuck~~ ~~Branflakes~~ BF language.
 
 ![BF](https://chrisvrose.github.io/static/projects/screenshots/bf-server.png)
 ## Functionality
