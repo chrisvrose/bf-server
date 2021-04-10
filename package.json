@@ -1,10 +1,10 @@
 {
 	"name": "bfc-server",
 	"displayName": "BF Language",
-	"description": "Brainfuck",
-	"author": "Rose",
+	"description": "BF Syntax Support",
+	"author": "Atreya Bain",
 	"license": "MIT",
-	"publisher": "Rose",
+	"publisher": "atreyabain",
 	"version": "0.0.1",
 	"categories": [],
 	"keywords": [
