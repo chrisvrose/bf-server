@@ -5,15 +5,15 @@
 	"author": "Atreya Bain",
 	"license": "MIT",
 	"publisher": "atreyabain",
-	"version": "0.0.1",
-	"icon":"assets/128.png",
+	"version": "0.0.3",
+	"icon": "assets/128.png",
 	"categories": [],
 	"keywords": [
 		"multi-root ready",
 		"brainfuck",
 		"branflakes"
 	],
-	"prettier":{
+	"prettier": {
 		"tabWidth": 4,
 		"semi": true,
 		"arrowParens": "avoid",
@@ -27,9 +27,9 @@
 	],
 	"repository": {
 		"type": "git",
-		"url":"https://github.com/chrisvrose/bf-server"
+		"url": "https://github.com/chrisvrose/bf-server"
 	},
-	"main": "./client/out/extension",
+	"main": "./client/dist/extension",
 	"contributes": {
 		"languages": [
 			{
@@ -55,12 +55,14 @@
 				"path": "./syntaxes/bf.tmLanguage.json"
 			}
 		],
-		"commands": [{
-			"command": "bf.execute",
-			"title": "BF: Execute",
-			"when": "editorLangId == bf",
-			"enablement": "editorLangId == bf"
-		}],
+		"commands": [
+			{
+				"command": "bf.execute",
+				"title": "BF: Execute",
+				"when": "editorLangId == bf",
+				"enablement": "editorLangId == bf"
+			}
+		],
 		"configuration": {
 			"type": "object",
 			"title": "Configurable properties",
@@ -87,7 +89,8 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -b",
+		"compile": "concurrently \"npm run webpack-prod --prefix client\" \"npm run webpack-prod --prefix server \"",
+		"_compile": "tsc -b",
 		"watch": "tsc -b -w",
 		"postinstall": "cd client && npm install && cd ../server && npm install && cd .."
 	},
@@ -98,6 +101,12 @@
 		"@typescript-eslint/parser": "^2.33.0",
 		"eslint": "^6.4.0",
 		"mocha": "^6.2.2",
-		"typescript": "^3.9.2"
+		"ts-loader": "^8.1.0",
+		"typescript": "^3.9.2",
+		"webpack": "^5.33.2",
+		"webpack-cli": "^4.6.0"
+	},
+	"dependencies": {
+		"concurrently": "^6.0.2"
 	}
 }
