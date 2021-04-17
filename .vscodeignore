@@ -1,15 +1,23 @@
-client/bf.g4
+**/out
+*.bf
+client/**
+server/**
+
+node_modules
+!client/dist
+!server/dist
+
+**/*.md
+!README.md
+*.vsix
 .vscode/**
 **/*.ts
 **/*.map
-.gitignore
+**/.gitignore
+**/.eslintrc.json
+**/.eslintignore
 **/tsconfig.json
 **/tsconfig.base.json
-contributing.md
+# contributing.md
 .travis.yml
-client/node_modules/**
-!client/node_modules/vscode-jsonrpc/**
-!client/node_modules/vscode-languageclient/**
-!client/node_modules/vscode-languageserver-protocol/**
-!client/node_modules/vscode-languageserver-types/**
-!client/node_modules/semver/**
+# client/node_modules/**
