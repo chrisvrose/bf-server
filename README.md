@@ -1,6 +1,6 @@
 # BF extension
 
-A simple language server based VSCode Extension for the ~~Brainfuck~~ ~~Branflakes~~ BF language.
+A simple language server based VSCode Extension for the ~~Brainfuck~~ ~~Branflakes~~ BF language. You can also execute your code and see its output.
 
 ![BF](https://chrisvrose.github.io/static/projects/screenshots/bf-server.png)
 ## Functionality
@@ -8,30 +8,14 @@ A simple language server based VSCode Extension for the ~~Brainfuck~~ ~~Branflak
 - [X] Syntax
 - [X] Bracket matching
 - [X] Autocomplete suggestions
-- [ ] Extension icon
+- [X] Extension icon
+- [X] Execution
+  - [ ] Timeout
 
-<!-- 
-## Structure
+### Execution
 
-```
-.
-├── client // Language Client
-│   ├── src
-│   │   ├── test // End to End tests for Language Client / Server
-│   │   └── extension.ts // Language Client entry point
-├── package.json // The extension manifest.
-└── server // Language Server
-    └── src
-        └── server.ts // Language Server entry point
-```
+Use the command to execute the code. 
+Issue is, because BF is a *turing complete* language, there is no way to know if the program will terminate or not. Hence for now, the command may lead to infinite execution. 
+Additionally, all input is done before program execution (If the program requests for input that hasn't been provided, `zero` is fed to it).
 
-## Running the Sample
-
-- Run `npm install` in this folder. This installs all necessary npm modules in both the client and server folder
-- Open VS Code on this folder.
-- Press Ctrl+Shift+B to compile the client and server.
-- Switch to the Debug viewlet.
-- Select `Launch Client` from the drop down.
-- Run the launch config.
-- If you want to debug the server as well use the launch configuration `Attach to Server`
- -->
+TODO: Implement a timeout.
