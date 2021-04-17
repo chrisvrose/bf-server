@@ -5,7 +5,7 @@
 
 import * as path from 'path';
 import { workspace, ExtensionContext,commands, window } from 'vscode';
-
+import {runBF} from './bfExecutor';
 import {
 	LanguageClient,
 	LanguageClientOptions,
@@ -42,6 +42,16 @@ export function activate(context: ExtensionContext) {
 		documentSelector: [{ scheme: 'file', language: 'bf' }]
 	};
 
+	const command = 'bf.execute';
+	const commandHandler = async()=>{
+		const text= window.activeTextEditor.document.getText();
+		const fn = window.activeTextEditor.document.fileName;
+		const input = await window.showInputBox({prompt:'Enter input (If not enough, program will assume 0)'});
+		const output = await runBF(text,fn,input);
+		await window.showInformationMessage(`Output: ${output}`);
+	};
+
+	context.subscriptions.push(commands.registerCommand(command,commandHandler));
 
 	// Create the language client and start the client.
 	client = new LanguageClient(

@@ -55,7 +55,12 @@
 				"path": "./syntaxes/bf.tmLanguage.json"
 			}
 		],
-		"commands": [],
+		"commands": [{
+			"command": "bf.execute",
+			"title": "BF: Execute",
+			"when": "editorLangId == bf",
+			"enablement": "editorLangId == bf"
+		}],
 		"configuration": {
 			"type": "object",
 			"title": "Configurable properties",

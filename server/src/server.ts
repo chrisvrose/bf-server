@@ -21,6 +21,7 @@ import {
 // import * as path from 'path';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
+// import { getTree } from './bfGrammar';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -149,19 +150,19 @@ documents.onDidSave(change => {
 
 const validateBrackets = (text: string) => {
 	let count = 0, lp: number[] = [],issues:number[]=[];
-	const textsplit = text.split(``);
+	const textsplit = text.split('');
 	textsplit.forEach((x, i) => {
-		if (x == '[' || x == ']') {
+		if (x === '[' || x === ']') {
 			
-			if (x == '[') lp.push(i);
-			if (x == ']') {if(lp.length==0) issues.push(i);lp.pop();}
+			if (x === '[') {lp.push(i);}
+			if (x === ']') {if(lp.length===0) {issues.push(i);}lp.pop();}
 
 			
 		}
 
 	});
 
-	return [...lp,...issues]
+	return [...lp,...issues];
 };
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
@@ -174,15 +175,15 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	let diagnostics: Diagnostic[] = [];
 	const issues = validateBrackets(text);
 	
-		diagnostics.push(...issues.map<Diagnostic>(e => ({
-			message: 'Brackets unmatched',
-			range:{
-				start: textDocument.positionAt(e),
-				end: textDocument.positionAt(e+1),
-			},
-			severity:DiagnosticSeverity.Error,
-			code:'[ and ]',
-		})));
+	diagnostics.push(...issues.map<Diagnostic>(e => ({
+		message: 'Brackets unmatched',
+		range:{
+			start: textDocument.positionAt(e),
+			end: textDocument.positionAt(e+1),
+		},
+		severity:DiagnosticSeverity.Error,
+		code:'[ and ]',
+	})));
 	
 	// diagnostics.push({
 	// 	message: 'Brackets not matched',
