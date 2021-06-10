@@ -1,6 +1,6 @@
 # BF extension
 
-A simple language server based VSCode Extension for the ~~Brainfuck~~ ~~Branflakes~~ BF language. You can also execute your code and see its output.
+A simple language server based VSCode Extension for the ~~Branflakes~~ BF language. You can also execute your code and see its output.
 
 ![BF](https://chrisvrose.github.io/static/projects/screenshots/bf-server.png)
 ## Functionality
