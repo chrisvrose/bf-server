@@ -5,13 +5,13 @@
 
 import * as path from 'path';
 import { workspace, ExtensionContext,commands, window } from 'vscode';
-import {runBF} from './bfExecutor';
 import {
 	LanguageClient,
 	LanguageClientOptions,
 	ServerOptions,
 	TransportKind
 } from 'vscode-languageclient';
+import BranFlakesExecutorVisitor from './BranFlakesExecutorVisitor';
 
 
 let client: LanguageClient;
@@ -47,7 +47,9 @@ export function activate(context: ExtensionContext) {
 		const text= window.activeTextEditor.document.getText();
 		const fn = window.activeTextEditor.document.fileName;
 		const input = await window.showInputBox({prompt:'Enter input (If not enough, program will assume 0)'});
-		const output = await runBF(text,fn,input);
+		
+		const output = BranFlakesExecutorVisitor.run(text,fn,input);
+		
 		await window.showInformationMessage(`Output: ${output}`);
 	};
 

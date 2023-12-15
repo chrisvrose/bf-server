@@ -16,9 +16,9 @@ export interface TranslationError {
 export function getTree(str: string, fn: string) {
 	const charStreams = CharStreams.fromString(str, fn);
 	const lexer = new bfLexer(charStreams);
-	// const errorListener = this.errorManager.newErrorListener();
 	const issues: TranslationError[] = [];
 	// remove the error listener. We want to put our own
+	
 	lexer.removeErrorListeners();
 	lexer.addErrorListener({
 		syntaxError(source, o, line, charPositionInLine, msg, error) {
