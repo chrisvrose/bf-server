@@ -16,32 +16,27 @@ export default class BranFlakesExecutorVisitor
      * @param inputPtr Input pointer to start from
      */
     constructor(
-        protected inputStrategy: InputStrategy,
-        protected logger: (val: string) => Thenable<string>,
-        protected inputPtr: number = 0
+        private inputStrategy: InputStrategy,
+        private logger: (val: string) => Thenable<string>,
+        private inputPtr: number = 0
     ) {
         super();
     }
     // /**
     //  * The memory cells (Can work with negative cells this way)
     //  */
-    // protected cells: Map<number, number> = new Map();
+    // private cells: Map<number, number> = new Map();
 
-    protected byteArraySize: number = 30000;
-    protected byteArray: Int8Array = new Int8Array(this.byteArraySize);
+    private byteArraySize: number = 30000;
+    private byteArray: Int8Array = new Int8Array(this.byteArraySize);
     /**
      * Pointer
      */
-    protected ptr: number = 0;
+    private ptr: number = 0;
     /** Output string */
-    protected outputStrArray: string[] = [];
+    private outputStr: string = '';
 
-    /**
-     * Output string (Available only after visiting)
-     */
-    public get outputStr() {
-        return this.outputStrArray.join('');
-    }
+    
 
     defaultResult() {
         return Promise.resolve();
@@ -57,7 +52,7 @@ export default class BranFlakesExecutorVisitor
         text: string,
         fn: string,
         inputStrategy: InputStrategy,
-        logger: (str:string) => Thenable<string>
+        logger: (str: string) => Thenable<string>
     ) {
         //get tree and issues
         const { tree, issues } = getTree(text, fn);
@@ -90,10 +85,10 @@ export default class BranFlakesExecutorVisitor
         }
     }
     async visitPtrLeft() {
-        --this.ptr;
+        this.ptr = (this.ptr + this.byteArraySize - 1) % this.byteArraySize;
     }
     async visitPtrRight() {
-        ++this.ptr;
+        this.ptr = (this.ptr + this.byteArraySize + 1) % this.byteArraySize;
     }
     async visitPtrIncr() {
         const val = this.getCell(this.ptr);
@@ -107,12 +102,12 @@ export default class BranFlakesExecutorVisitor
         const val = this.getCell(this.ptr) ?? 0;
         const str = String.fromCharCode(val);
 
-        this.outputStrArray.push(str);
+        this.outputStr += str;
     }
 
     async visitInputStmt() {
         //get char
-        const char = await this.inputStrategy.getInput() ?? 0;
+        const char = (await this.inputStrategy.getInput()) ?? 0;
         //increment the input pointer after this
         this.inputPtr++;
         this.setCell(this.ptr, char);
@@ -120,7 +115,6 @@ export default class BranFlakesExecutorVisitor
 
     // override for maintaining async
     async visitChildren(node: RuleNode): Promise<void> {
-        // await this.logger("checking "+node.constructor.name)
         let result = this.defaultResult();
         await result;
         let n = node.childCount;
