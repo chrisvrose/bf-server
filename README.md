@@ -21,6 +21,11 @@ TODO: Implement a timeout.
 
 ### Changelog
 
+#### 0.2.1
+
+- Change category
+- Small bugfix for brackets validation
+
 #### 0.2.0
 
 - Cycle input pointer on overflow/underflow
