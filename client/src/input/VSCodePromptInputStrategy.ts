@@ -1,5 +1,5 @@
-import { CancellationToken, InputBoxOptions } from 'vscode';
-import InputStrategy from './InputStrategy';
+import type { CancellationToken, InputBoxOptions } from 'vscode';
+import type InputStrategy from './InputStrategy';
 
 export class VSCodePromptInputStrategy implements InputStrategy {
     private inputQueue: string = '';

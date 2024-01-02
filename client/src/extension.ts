@@ -4,14 +4,15 @@
  * ------------------------------------------------------------------------------------------ */
 
 import * as path from 'path';
-import { ExtensionContext, commands, window } from 'vscode';
+import { commands } from 'vscode';
+import type { ExtensionContext } from 'vscode';
 import {
     LanguageClient,
     LanguageClientOptions,
     ServerOptions,
     TransportKind,
 } from 'vscode-languageclient';
-import { CompileBranFlakesCommand } from './command/CompileCommand';
+import { CompileBranFlakesCommand } from './command/CompileBranFlakesCommand';
 
 let client: LanguageClient;
 

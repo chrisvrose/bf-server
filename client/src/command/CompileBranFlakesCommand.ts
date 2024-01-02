@@ -1,7 +1,6 @@
 import { window } from 'vscode';
-import { Command as BranFlakesCommand } from './Command';
+import type { BranFlakesCommand } from './BranFlakesCommand';
 import { VSCodePromptInputStrategy } from '../input/VSCodePromptInputStrategy';
-import BranFlakesExecutorVisitor from '../BranFlakesExecutorVisitor';
 
 export class CompileBranFlakesCommand implements BranFlakesCommand {
     getCommandName() {
@@ -14,6 +13,10 @@ export class CompileBranFlakesCommand implements BranFlakesCommand {
             const inputStrategy = new VSCodePromptInputStrategy(
                 window.showInputBox
             );
+            const { BranFlakesExecutorVisitor } = await import(
+                '../BranFlakesExecutorVisitor'
+            );
+
             const output = await BranFlakesExecutorVisitor.run(
                 text,
                 fn,

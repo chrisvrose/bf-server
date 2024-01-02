@@ -5,9 +5,9 @@
 	"author": "Atreya Bain",
 	"license": "MIT",
 	"publisher": "atreyabain",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"icon": "assets/128.png",
-	"categories": [],
+	"categories": ["Programming Languages","Linters"],
 	"keywords": [
 		"multi-root ready",
 		"brainfuck",

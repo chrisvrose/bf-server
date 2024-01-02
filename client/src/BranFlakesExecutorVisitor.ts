@@ -4,9 +4,9 @@ import { bfVisitor } from './generated/bfVisitor';
 import { DiagnosticSeverity } from 'vscode-languageclient';
 import { getTree } from './BranFlakesParseRunner';
 import { RuleNode } from 'antlr4ts/tree/RuleNode';
-import InputStrategy from './input/InputStrategy';
+import type InputStrategy from './input/InputStrategy';
 
-export default class BranFlakesExecutorVisitor
+export class BranFlakesExecutorVisitor
     extends AbstractParseTreeVisitor<Promise<void>>
     implements bfVisitor<Promise<void>>
 {
