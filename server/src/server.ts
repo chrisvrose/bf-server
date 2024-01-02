@@ -18,10 +18,10 @@ import {
 	Position,
 } from 'vscode-languageserver';
 
-// import * as path from 'path';
+
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
-// import { getTree } from './bfGrammar';
+
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.

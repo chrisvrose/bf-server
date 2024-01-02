@@ -4,14 +4,15 @@
  * ------------------------------------------------------------------------------------------ */
 
 import * as path from 'path';
-import { workspace, ExtensionContext,commands, window } from 'vscode';
-import {runBF} from './bfExecutor';
+import { ExtensionContext,commands, window } from 'vscode';
 import {
 	LanguageClient,
 	LanguageClientOptions,
 	ServerOptions,
 	TransportKind
 } from 'vscode-languageclient';
+import BranFlakesExecutorVisitor from './BranFlakesExecutorVisitor';
+import { VSCodePromptInputStrategy } from './input/VSCodePromptInputStrategy';
 
 
 let client: LanguageClient;
@@ -46,8 +47,8 @@ export function activate(context: ExtensionContext) {
 	const commandHandler = async()=>{
 		const text= window.activeTextEditor.document.getText();
 		const fn = window.activeTextEditor.document.fileName;
-		const input = await window.showInputBox({prompt:'Enter input (If not enough, program will assume 0)'});
-		const output = await runBF(text,fn,input);
+		const inputStrategy = new VSCodePromptInputStrategy(window.showInputBox);
+		const output = await BranFlakesExecutorVisitor.run(text,fn,inputStrategy,window.showInformationMessage);
 		await window.showInformationMessage(`Output: ${output}`);
 	};
 
