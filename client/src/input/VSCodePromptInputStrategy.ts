@@ -11,7 +11,6 @@ export class VSCodePromptInputStrategy implements InputStrategy {
         }
         const character = this.inputQueue.charCodeAt(0);
         this.inputQueue = this.inputQueue.substring(1);
-        //request input
         
         return character;
     }
