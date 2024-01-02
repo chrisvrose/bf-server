@@ -2,7 +2,7 @@
 
 A simple language server based VSCode Extension for the ~~Branflakes~~ BF language. You can also execute your code and see its output.
 
-![BF](https://chrisvrose.github.io/static/projects/screenshots/bf-server.png)
+![BF](https://kekvrose.me/static/projects/screenshots/bf-server.png)
 ## Functionality
 
 - [X] Syntax
