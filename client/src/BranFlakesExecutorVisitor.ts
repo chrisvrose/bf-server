@@ -3,114 +3,144 @@ import { LoopStmtContext } from './generated/bfParser';
 import { bfVisitor } from './generated/bfVisitor';
 import { DiagnosticSeverity } from 'vscode-languageclient';
 import { getTree } from './BranFlakesParseRunner';
+import { RuleNode } from 'antlr4ts/tree/RuleNode';
+import InputStrategy from './input/InputStrategy';
 
 export default class BranFlakesExecutorVisitor
-	extends AbstractParseTreeVisitor<void>
-	implements bfVisitor<void> {
+    extends AbstractParseTreeVisitor<Promise<void>>
+    implements bfVisitor<Promise<void>>
+{
+    /**
+     *
+     * @param input Input string
+     * @param inputPtr Input pointer to start from
+     */
+    constructor(
+        protected inputStrategy: InputStrategy,
+        protected logger: (val: string) => Thenable<string>,
+        protected inputPtr: number = 0
+    ) {
+        super();
+    }
+    // /**
+    //  * The memory cells (Can work with negative cells this way)
+    //  */
+    // protected cells: Map<number, number> = new Map();
 
-	/**
-	 *
-	 * @param input Input string
-	 * @param inputPtr Input pointer to start from
-	 */
-	constructor(protected input: string = '', protected inputPtr: number = 0) {
-		super();
-	}
-	/**
-	 * The memory cells (Can work with negative cells this way)
-	 */
-	protected cells: Map<number, number> = new Map();
-	protected byteArray: Int8Array = new Int8Array(30000);
-	/**
-	 * Pointer
-	 */
-	protected ptr: number = 0;
-	/** Output string */
-	protected outputStrArray: string[] = [];
+    protected byteArraySize: number = 30000;
+    protected byteArray: Int8Array = new Int8Array(this.byteArraySize);
+    /**
+     * Pointer
+     */
+    protected ptr: number = 0;
+    /** Output string */
+    protected outputStrArray: string[] = [];
 
-	/**
-	 * Output string (Available only after visiting)
-	 */
-	public get outputStr() {
-		return this.outputStrArray.join('');
-	}
+    /**
+     * Output string (Available only after visiting)
+     */
+    public get outputStr() {
+        return this.outputStrArray.join('');
+    }
 
+    defaultResult() {
+        return Promise.resolve();
+    }
+    /**
+     * Run a file
+     * @param text
+     * @param fn
+     * @param inputStrategy
+     * @returns
+     */
+    static async run(
+        text: string,
+        fn: string,
+        inputStrategy: InputStrategy,
+        logger: (str:string) => Thenable<string>
+    ) {
+        //get tree and issues
+        const { tree, issues } = getTree(text, fn);
 
-	defaultResult() { }
-	/**
-	 * Run a file
-	 * @param text 
-	 * @param fn 
-	 * @param input 
-	 * @returns 
-	 */
-	static run(text:string,fn: string, input:string){
-		//get tree and issues
-		const { tree, issues } = getTree(text, fn);
+        //get only errors
+        const x = issues.filter(e => e.type === DiagnosticSeverity.Error);
+        //if any error, drop
+        if (x.length > 0) {
+            throw Error('Errors exist');
+        }
+        // make visitor
+        const vis = new BranFlakesExecutorVisitor(inputStrategy, logger);
+        //visit the tree
+        await vis.visit(tree);
 
-		//get only errors
-		const x = issues.filter(e => e.type === DiagnosticSeverity.Error);
-		//if any error, drop
-		if (x.length > 0) {
-			throw Error('Errors exist');
-		}
-		// make visitor
-		const vis = new BranFlakesExecutorVisitor(input);
-	
-		//visit the tree
-		vis.visit(tree);
-	
-		//get output
-		return vis.outputStr;
-	}
-	
+        //get output
+        return vis.outputStr;
+    }
 
-	visitLoopStmt(ctx: LoopStmtContext) {
-		while ((this.cells.get(this.ptr) ?? 0) !== 0) {
-			this.visitChildren(ctx);
-		}
-	}
-	visitPtrLeft() {
+    getCell(pointerIndex: number) {
+        return this.byteArray[pointerIndex];
+    }
+    setCell(pointerIndex: number, value: number): void {
+        this.byteArray[pointerIndex] = value;
+    }
 
-		--this.ptr;
-	}
-	visitPtrRight() {
-		++this.ptr;
-	}
-	visitPtrIncr() {
+    async visitLoopStmt(ctx: LoopStmtContext) {
+        while ((this.getCell(this.ptr) ?? 0) !== 0) {
+            await this.visitChildren(ctx);
+        }
+    }
+    async visitPtrLeft() {
+        --this.ptr;
+    }
+    async visitPtrRight() {
+        ++this.ptr;
+    }
+    async visitPtrIncr() {
+        const val = this.getCell(this.ptr);
+        this.setCell(this.ptr, (val + 1) % 256);
+    }
+    async visitPtrDecr() {
+        const val = this.getCell(this.ptr);
+        this.setCell(this.ptr, (val + 255) % 256);
+    }
+    async visitOutputStmt() {
+        const val = this.getCell(this.ptr) ?? 0;
+        const str = String.fromCharCode(val);
 
-		const val = this.cells.get(this.ptr);
-		if (val === undefined) {
-			this.cells.set(this.ptr, 1);
-		} else if (val === 255) {
-			this.cells.delete(this.ptr);
-		} else {
-			this.cells.set(this.ptr, val + 1);
-		}
-	}
-	visitPtrDecr() {
-		// console.log('down',this.ptr,this.cells);
-		const val = this.cells.get(this.ptr);
-		if (val === undefined || val === 0) {
-			this.cells.set(this.ptr, 255);
-		} else if (val === 1) {
-			this.cells.delete(this.ptr);
-		} else {
-			this.cells.set(this.ptr, val - 1);
-		}
-	}
-	visitOutputStmt() {
-		const val = this.cells.get(this.ptr) ?? 0;
-		const str = String.fromCharCode(val);
-		// console.log('op',str);
-		this.outputStrArray.push(str);
-	}
+        this.outputStrArray.push(str);
+    }
 
-	visitInputStmt() {
-		//get char
-		const char = this.input.charCodeAt(this.inputPtr) ?? 0;
-		//increment the input pointer after this
-		this.inputPtr++;
-		this.cells.set(this.ptr, char);
-	}
+    async visitInputStmt() {
+        //get char
+        const char = await this.inputStrategy.getInput() ?? 0;
+        //increment the input pointer after this
+        this.inputPtr++;
+        this.setCell(this.ptr, char);
+    }
+
+    // override for maintaining async
+    async visitChildren(node: RuleNode): Promise<void> {
+        // await this.logger("checking "+node.constructor.name)
+        let result = this.defaultResult();
+        await result;
+        let n = node.childCount;
+        for (let i = 0; i < n; i++) {
+            if (!this.shouldVisitNextChild(node, result)) {
+                break;
+            }
+            let c = node.getChild(i);
+            let childResult = c.accept(this);
+            result = this.aggregateResult(result, childResult);
+            await result;
+        }
+        return Promise.resolve();
+    }
+    // override for maintaining async
+    protected async aggregateResult(
+        aggregate: Promise<void>,
+        nextResult: Promise<void>
+    ): Promise<void> {
+        await aggregate;
+        return nextResult;
+    }
 }
