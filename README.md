@@ -25,7 +25,7 @@ TODO: Implement a timeout.
 
 ### Changelog
 
-#### 0.5.0
+#### 0.1.0
 
 - Request input as required during execution
 - Using array-based indexing. This implies that only positive indices upto 30k are supported.
