@@ -21,9 +21,6 @@ export let connection = createConnection(ProposedFeatures.all);
 // supports full document sync only
 let documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
-let hasConfigurationCapability: boolean = false;
-
-
 
 let globalSettings: BranFlakesSettings = defaultSettings;
 
@@ -34,7 +31,7 @@ let cm = new BranFlakesConnectionManager(connection, validateTextDocument,docume
 
 
 export function getDocumentSettings(resource: string): Thenable<BranFlakesSettings> {
-	if (!hasConfigurationCapability) {
+	if (!settingsManager.hasConfigurationCapability) {
 		return Promise.resolve(globalSettings);
 	}
 	let result = documentSettings.get(resource);

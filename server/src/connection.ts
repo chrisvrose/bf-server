@@ -7,8 +7,8 @@ export class BranFlakesConnectionManager {
 	
 
 	constructor(protected connection: Connection, private validator:typeof validateTextDocument, private documents:TextDocuments<TextDocument>, private settingsManager:SettingsManager) {
-		connection.onInitialize(this.initConnection);
-		connection.onDidChangeConfiguration(this.onDidChangeConfiguration);
+		connection.onInitialize(this.initConnection.bind(this));
+		connection.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this));
 	}
 
 
