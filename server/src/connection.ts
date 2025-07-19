@@ -1,26 +1,30 @@
-import { CompletionItem, CompletionItemKind, Connection, DidChangeConfigurationNotification, DidChangeConfigurationParams, InitializeParams, InitializeResult, TextDocumentPositionParams, TextDocumentSyncKind } from 'vscode-languageserver';
+import { CompletionItem, CompletionItemKind, Connection, DidChangeConfigurationNotification, DidChangeConfigurationParams, InitializeParams, InitializeResult, TextDocumentPositionParams, TextDocuments, TextDocumentSyncKind } from 'vscode-languageserver';
+import { validateTextDocument } from './validation';
+import { TextDocument } from 'vscode-languageserver-textdocument';
+import { BranFlakesSettings, defaultSettings, SettingsManager } from './settings';
 
 export class BranFlakesConnectionManager {
-	hasConfigurationCapability: boolean = false;
-	hasWorkspaceFolderCapability: boolean = false;
-	hasDiagnosticRelatedInformationCapability: boolean = false;
+	
 
-	constructor(protected connection: Connection) {
+	constructor(protected connection: Connection, private validator:typeof validateTextDocument, private documents:TextDocuments<TextDocument>, private settingsManager:SettingsManager) {
 		connection.onInitialize(this.initConnection);
+		connection.onDidChangeConfiguration(this.onDidChangeConfiguration);
 	}
+
+
 
 	initConnection(params: InitializeParams) {
 		let capabilities = params.capabilities;
 
 		// Does the client support the `workspace/configuration` request?
 		// If not, we will fall back using global settings
-		this.hasConfigurationCapability = !!(
+		this.settingsManager.hasConfigurationCapability = !!(
 			capabilities.workspace && !!capabilities.workspace.configuration
 		);
-		this.hasWorkspaceFolderCapability = !!(
+		this.settingsManager.hasWorkspaceFolderCapability = !!(
 			capabilities.workspace && !!capabilities.workspace.workspaceFolders
 		);
-		this.hasDiagnosticRelatedInformationCapability = !!(
+		this.settingsManager.hasDiagnosticRelatedInformationCapability = !!(
 			capabilities.textDocument &&
 			capabilities.textDocument.publishDiagnostics &&
 			capabilities.textDocument.publishDiagnostics.relatedInformation
@@ -36,7 +40,7 @@ export class BranFlakesConnectionManager {
 				},
 			},
 		};
-		if (this.hasWorkspaceFolderCapability) {
+		if (this.settingsManager.hasWorkspaceFolderCapability) {
 			result.capabilities.workspace = {
 				workspaceFolders: {
 					supported: true,
@@ -45,15 +49,31 @@ export class BranFlakesConnectionManager {
 		}
 		return result;
 	}
+
+	onDidChangeConfiguration(change:DidChangeConfigurationParams){
+		if (this.settingsManager.hasConfigurationCapability) {
+			// Reset all cached document settings
+			this.settingsManager.clearDocumentSettings();
+		} else {
+			this.settingsManager.updateSettings(
+				(change.settings.languageServerExample || defaultSettings)
+			);
+		}
+		
+		// Revalidate all open text documents
+		Promise.all(this.documents.all().map(validateTextDocument)).catch(e => {
+			this.connection.console.log('Failed to validate text documents');
+		});
+	}
 	onInit() {
-		if (this.hasConfigurationCapability) {
+		if (this.settingsManager.hasConfigurationCapability) {
 			// Register for all configuration changes.
 			this.connection.client.register(
 				DidChangeConfigurationNotification.type,
 				undefined
 			);
 		}
-		if (this.hasWorkspaceFolderCapability) {
+		if (this.settingsManager.hasWorkspaceFolderCapability) {
 			this.connection.workspace.onDidChangeWorkspaceFolders(_event => {
 				// connection.console.log('Workspace folder change event received.');
 			});

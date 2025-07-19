@@ -8,21 +8,26 @@ export class VSCodePromptInputStrategy implements InputStrategy {
             promptOptions?: InputBoxOptions,
             cancelToken?: CancellationToken
         ) => Thenable<string>
-    ) {}
+    ) { }
 
     async getInput(): Promise<number> {
-        while (this.inputQueue.length == 0) {
-            await this.requestInputFromPrompt();
-        }
-        const character = this.inputQueue.charCodeAt(0);
-        this.inputQueue = this.inputQueue.substring(1);
+    	while (this.inputQueue.length === 0) {
+    		await this.requestInputFromPrompt();
+    	}
+    	const character = this.popInputFromQueue();
 
-        return character;
+    	return character;
     }
+    private popInputFromQueue() {
+    	const character = this.inputQueue.charCodeAt(0);
+    	this.inputQueue = this.inputQueue.substring(1);
+    	return character;
+    }
+
     private async requestInputFromPrompt() {
-        const inputPrompt = await this.requestor({
-            prompt: 'More input is required. Please provide input:',
-        });
-        this.inputQueue += inputPrompt;
+    	const inputPrompt = await this.requestor({
+    		prompt: 'More input is required. Please provide input:',
+    	});
+    	this.inputQueue += inputPrompt;
     }
 }

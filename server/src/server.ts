@@ -9,7 +9,7 @@ import {
 } from 'vscode-languageserver';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { BranFlakesSettings, defaultSettings } from './settings';
+import { BranFlakesSettings, defaultSettings, SettingsManager } from './settings';
 import { BranFlakesConnectionManager } from './connection';
 import { validateTextDocument } from './validation';
 
@@ -23,29 +23,15 @@ let documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
 let hasConfigurationCapability: boolean = false;
 
-let cm = new BranFlakesConnectionManager(connection);
 
 
 let globalSettings: BranFlakesSettings = defaultSettings;
 
 // Cache the settings of all open documents
 let documentSettings: Map<string, Thenable<BranFlakesSettings>> = new Map();
+let settingsManager = new SettingsManager();
+let cm = new BranFlakesConnectionManager(connection, validateTextDocument,documents,settingsManager);
 
-connection.onDidChangeConfiguration(change => {
-	if (hasConfigurationCapability) {
-		// Reset all cached document settings
-		documentSettings.clear();
-	} else {
-		globalSettings = <BranFlakesSettings>(
-            (change.settings.languageServerExample || defaultSettings)
-        );
-	}
-
-	// Revalidate all open text documents
-	Promise.all(documents.all().map(validateTextDocument)).catch(e => {
-		connection.console.log('Failed to validate text documents');
-	});
-});
 
 export function getDocumentSettings(resource: string): Thenable<BranFlakesSettings> {
 	if (!hasConfigurationCapability) {
@@ -64,7 +50,7 @@ export function getDocumentSettings(resource: string): Thenable<BranFlakesSettin
 
 // Only keep settings for open documents
 documents.onDidClose(e => {
-	documentSettings.delete(e.document.uri);
+	settingsManager.closeDocument(e.document.uri);
 });
 
 // The content of a text document has changed. This event is emitted

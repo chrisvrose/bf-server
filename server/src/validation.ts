@@ -24,6 +24,8 @@ export const validateBrackets = (text: string) => {
 	return [...lp, ...issues];
 };
 
+
+
 export async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	// In this simple example we get the settings for every validate run.
 	let settings = await getDocumentSettings(textDocument.uri);
