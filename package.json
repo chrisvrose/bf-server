@@ -85,7 +85,18 @@
 					"description": "Traces the communication between VS Code and the language server."
 				}
 			}
-		}
+		},
+		"taskDefinitions": [
+			{
+				"type": "bf-run",
+				"properties": {
+					"file":{
+						"type":"string",
+						"description": "The BF file to be executed. Can be omitted to run current file"
+					}
+				}
+			}
+		]
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",

@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 
 import * as path from 'path';
-import { commands, tasks, workspace } from 'vscode';
+import { commands, tasks, workspace,window } from 'vscode';
 import type { Disposable, ExtensionContext } from 'vscode';
 import {
 	LanguageClient,
@@ -71,7 +71,8 @@ export function activate(context: ExtensionContext) {
 
 	const workspaceRoot = (workspace.workspaceFolders && (workspace.workspaceFolders.length > 0))
 		? workspace.workspaceFolders[0].uri.fsPath : undefined;
-	bfRunTaskProvider = tasks.registerTaskProvider(CustomExecutionTaskProvider.type, new CustomExecutionTaskProvider(workspaceRoot, undefined));
+	
+	bfRunTaskProvider = tasks.registerTaskProvider(CustomExecutionTaskProvider.type, new CustomExecutionTaskProvider(workspaceRoot));
 }
 
 export function deactivate(): Thenable<void> | undefined {
