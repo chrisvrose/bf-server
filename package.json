@@ -29,7 +29,7 @@
 		"type": "git",
 		"url": "https://github.com/chrisvrose/bf-server"
 	},
-	"main": "./client/dist/extension",
+	"main": "./client/dist/extension.js",
 	"contributes": {
 		"languages": [
 			{

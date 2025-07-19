@@ -4,8 +4,8 @@
  * ------------------------------------------------------------------------------------------ */
 
 import * as path from 'path';
-import { commands } from 'vscode';
-import type { ExtensionContext } from 'vscode';
+import { commands, tasks, workspace } from 'vscode';
+import type { Disposable, ExtensionContext } from 'vscode';
 import {
 	LanguageClient,
 	LanguageClientOptions,
@@ -13,8 +13,11 @@ import {
 	TransportKind,
 } from 'vscode-languageclient';
 import { CompileBranFlakesCommand } from './command/CompileBranFlakesCommand';
+import { CustomExecutionTaskProvider } from './task/CustomExecutionTerminal';
 
 let client: LanguageClient;
+
+let bfRunTaskProvider: Disposable;
 
 export function activate(context: ExtensionContext) {
 	// The server is implemented in node
@@ -48,9 +51,12 @@ export function activate(context: ExtensionContext) {
 			commands.registerCommand(
 				branFlakesCommand.getCommandName(),
 				branFlakesCommand.getCommandHandler()
-			)
+			),
+
+
 		);
 	}
+
 
 	// Create the language client and start the client.
 	client = new LanguageClient(
@@ -62,11 +68,16 @@ export function activate(context: ExtensionContext) {
 
 	// Start the client. This will also launch the server
 	client.start();
+
+	const workspaceRoot = (workspace.workspaceFolders && (workspace.workspaceFolders.length > 0))
+		? workspace.workspaceFolders[0].uri.fsPath : undefined;
+	bfRunTaskProvider = tasks.registerTaskProvider(CustomExecutionTaskProvider.type, new CustomExecutionTaskProvider(workspaceRoot, undefined));
 }
 
 export function deactivate(): Thenable<void> | undefined {
 	if (!client) {
 		return undefined;
 	}
-	return client.stop();
+	bfRunTaskProvider?.dispose();
+	client?.stop();
 }
