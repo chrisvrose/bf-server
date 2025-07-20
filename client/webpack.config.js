@@ -16,7 +16,8 @@ const config = {
 		path: path.resolve(__dirname, 'dist'),
 		filename: '[name].js',
 		libraryTarget: 'commonjs2',
-		devtoolModuleFilenameTemplate: '../[resource-path]'
+		sourceMapFilename: '[name].js.map',
+		devtoolModuleFilenameTemplate: '../[resource-path]',
 	},
 	// devtool: 'source-map',
 	externals: {
@@ -27,6 +28,7 @@ const config = {
 		innerGraph:true,
 		usedExports:true
 	},
+	
 	resolve: {
 		// support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
 		extensions: ['.ts', '.js'],

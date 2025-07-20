@@ -4,7 +4,7 @@ import { VSCodePromptInputStrategy } from '../input/VSCodePromptInputStrategy';
 
 export class CompileBranFlakesCommand implements BranFlakesCommand {
 	getCommandName() {
-		return 'bf.execute';
+		return 'bf.execute.old';
 	}
 	getCommandHandler() {
 		return async () => {
@@ -14,7 +14,7 @@ export class CompileBranFlakesCommand implements BranFlakesCommand {
 				window.showInputBox
 			);
 			const { BranFlakesExecutorVisitor } = await import(
-				'../BranFlakesExecutorVisitor'
+				'../exec/BranFlakesExecutorVisitor'
 			);
 
 			const output = await BranFlakesExecutorVisitor.run(

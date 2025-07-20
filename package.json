@@ -57,7 +57,7 @@
 		],
 		"commands": [
 			{
-				"command": "bf.execute",
+				"command": "bf.execute.old",
 				"title": "BF: Execute",
 				"when": "editorLangId == bf",
 				"enablement": "editorLangId == bf"
