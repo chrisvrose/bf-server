@@ -5,7 +5,7 @@
 	"author": "Atreya Bain",
 	"license": "MIT",
 	"publisher": "atreyabain",
-	"version": "0.2.1",
+	"version": "0.3.1",
 	"icon": "assets/128.png",
 	"categories": ["Programming Languages","Linters"],
 	"keywords": [
@@ -29,7 +29,7 @@
 		"type": "git",
 		"url": "https://github.com/chrisvrose/bf-server"
 	},
-	"main": "./client/dist/extension",
+	"main": "./client/dist/extension.js",
 	"contributes": {
 		"languages": [
 			{
@@ -57,7 +57,7 @@
 		],
 		"commands": [
 			{
-				"command": "bf.execute",
+				"command": "bf.execute.old",
 				"title": "BF: Execute",
 				"when": "editorLangId == bf",
 				"enablement": "editorLangId == bf"
@@ -85,7 +85,18 @@
 					"description": "Traces the communication between VS Code and the language server."
 				}
 			}
-		}
+		},
+		"taskDefinitions": [
+			{
+				"type": "bf-run",
+				"properties": {
+					"file":{
+						"type":"string",
+						"description": "The BF file to be executed. Can be omitted to run current file"
+					}
+				}
+			}
+		]
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",

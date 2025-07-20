@@ -3,27 +3,27 @@ import type { BranFlakesCommand } from './BranFlakesCommand';
 import { VSCodePromptInputStrategy } from '../input/VSCodePromptInputStrategy';
 
 export class CompileBranFlakesCommand implements BranFlakesCommand {
-    getCommandName() {
-        return 'bf.execute';
-    }
-    getCommandHandler() {
-        return async () => {
-            const text = window.activeTextEditor.document.getText();
-            const fn = window.activeTextEditor.document.fileName;
-            const inputStrategy = new VSCodePromptInputStrategy(
-                window.showInputBox
-            );
-            const { BranFlakesExecutorVisitor } = await import(
-                '../BranFlakesExecutorVisitor'
-            );
+	getCommandName() {
+		return 'bf.execute.old';
+	}
+	getCommandHandler() {
+		return async () => {
+			const text = window.activeTextEditor.document.getText();
+			const fn = window.activeTextEditor.document.fileName;
+			const inputStrategy = new VSCodePromptInputStrategy(
+				window.showInputBox
+			);
+			const { BranFlakesExecutorVisitor } = await import(
+				'../exec/BranFlakesExecutorVisitor'
+			);
 
-            const output = await BranFlakesExecutorVisitor.run(
-                text,
-                fn,
-                inputStrategy,
-                window.showInformationMessage
-            );
-            await window.showInformationMessage(`Output: ${output}`);
-        };
-    }
+			const output = await BranFlakesExecutorVisitor.run(
+				text,
+				fn,
+				inputStrategy,
+				window.showInformationMessage
+			);
+			await window.showInformationMessage(`Output: ${output}`);
+		};
+	}
 }
