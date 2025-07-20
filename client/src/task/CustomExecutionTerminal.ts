@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { BranFlakesExecutorVisitor } from '../exec/BranFlakesExecutorVisitor';
+import { AbortClassRequestor } from '../exec/AbortRequestor';
 
 interface BFRunTaskDefinition extends vscode.TaskDefinition {
 	file?: string;
@@ -63,7 +64,7 @@ class CustomBuildTaskTerminal implements vscode.Pseudoterminal {
 	private openDocument: vscode.TextDocument | undefined;
 	onDidWrite: vscode.Event<string> = this.writeEmitter.event;
 	onDidClose?: vscode.Event<number> = this.closeEmitter.event;
-
+	abortRequestor = new AbortClassRequestor();
 
 	handleInput(data: string): void {
 		// this.writeEmitter.fire(`Echo(${data.length})` + data);
@@ -106,6 +107,8 @@ class CustomBuildTaskTerminal implements vscode.Pseudoterminal {
 
 	close(): void {
 		// The terminal has been closed. Shutdown the build.
+		console.log('Forced close');
+		this.abortRequestor.requestAbort();
 	}
 
 	private async doExecution(): Promise<void> {
@@ -120,13 +123,11 @@ class CustomBuildTaskTerminal implements vscode.Pseudoterminal {
 						return new Promise((res, rej) => {
 							if (cus.inputQueue.length > 0) {
 								const char = cus.inputQueue.shift();
-								console.log('consumed input', char);
 								res(char);
 							} else {
 								const dispose: vscode.Disposable[] = [];
 								cus.readEmitter.event(e => {
 									const char = cus.inputQueue.shift();
-									console.log('consumed input async', char);
 									//clear the earliest disposable
 									dispose.shift()?.dispose();
 									res(char);
@@ -137,9 +138,8 @@ class CustomBuildTaskTerminal implements vscode.Pseudoterminal {
 					},
 				},
 				async (data) => {
-					// console.log('output', data);
 					this.writeEmitter.fire(replaceLFWithCRLF(data));
-				}
+				},this.abortRequestor
 			);
 			this.closeEmitter.fire(0);
 		} catch (e) {

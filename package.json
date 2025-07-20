@@ -5,7 +5,7 @@
 	"author": "Atreya Bain",
 	"license": "MIT",
 	"publisher": "atreyabain",
-	"version": "0.2.1",
+	"version": "0.3.0",
 	"icon": "assets/128.png",
 	"categories": ["Programming Languages","Linters"],
 	"keywords": [

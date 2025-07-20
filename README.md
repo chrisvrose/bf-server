@@ -13,13 +13,20 @@ A simple language server based VSCode Extension for the (Branflakes?) (BrainFuck
 
 ### Execution
 
-Use the command to execute the code. 
-Issue is, because BF is a **turing complete** language, there is no way to know if the program will terminate or not. Hence for now, the command may lead to infinite execution.
+Use the BF execute task to execute the code. 
+Because JS is single threaded+.
 If the program requires input, it will be requested as a prompt.
 
 TODO: Implement a timeout.
 
 ### Changelog
+
+#### 0.3.0
+
+- Added a task for execution
+  - Press Control C to halt it while its waiting for input
+  - Close task to abort execution
+
 
 #### 0.2.1
 
