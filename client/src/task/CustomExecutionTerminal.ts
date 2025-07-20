@@ -71,6 +71,7 @@ class CustomBuildTaskTerminal implements vscode.Pseudoterminal {
 		const newData = [...data].map(e => e.charCodeAt(0));
 		console.log('new input', newData);
 		this.inputQueue.push(...newData);
+		this.writeEmitter.fire(replaceLFWithCRLF(data));
 		this.readEmitter.fire();
 	}
 
@@ -112,7 +113,7 @@ class CustomBuildTaskTerminal implements vscode.Pseudoterminal {
 	}
 
 	private async doExecution(): Promise<void> {
-		this.writeEmitter.fire('[bf] Requested execution of ' + this.fileName + '\r\n');
+		this.writeEmitter.fire('[bf] Requested execution of ' + (this.fileName ?? 'active file') + '\r\n');
 		const cus = this;
 		try {
 
